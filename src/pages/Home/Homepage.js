@@ -143,17 +143,25 @@ const HomePage = () => {
             return;
         }
 
-        const filterList = allTask?.filter((item) =>
+        const filteredList = allTask.filter((item) =>
             item.title.toLowerCase().includes(query.toLowerCase())
         );
 
-        setAllTask(filterList.length > 0 ? filterList : []);
+        setAllTask(filteredList);
     };
 
     // fetch todos on mount
     useEffect(() => {
         getUserTask();
     }, [getUserTask]);
+
+    // handle task creation
+    const handleTaskCreated = async () => {
+        await getUserTask(); // refresh the task list after creation
+        setTitle(""); // reset modal fields
+        setDescription("");
+        setShowModal(false);
+    };
 
     return (
         <>
@@ -163,7 +171,7 @@ const HomePage = () => {
                     <h1>Your Task</h1>
                     <input
                         type="search"
-                        placeholder="search your task"
+                        placeholder="Search your task"
                         value={searchQuery}
                         onChange={handleSearch}
                     />
@@ -180,13 +188,13 @@ const HomePage = () => {
 
                 {/* ========== modal =========== */}
                 <PopModal
-                    getUserTask={getUserTask}
                     showModal={showModal}
                     setShowModal={setShowModal}
                     title={title}
                     setTitle={setTitle}
                     description={description}
                     setDescription={setDescription}
+                    onTaskCreated={handleTaskCreated} // <-- add this callback
                 />
             </div>
         </>
@@ -194,3 +202,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
