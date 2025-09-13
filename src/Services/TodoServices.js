@@ -75,14 +75,47 @@
 
 
 
+// import axios from "axios";
+
+// // Create axios instance with base URL
+// const API = axios.create({
+//     baseURL: process.env.REACT_APP_API_URL + "/todo",
+// });
+
+// // Add Authorization header automatically
+// API.interceptors.request.use((config) => {
+//     const user = JSON.parse(localStorage.getItem("todoapp"));
+//     if (user?.token) {
+//         config.headers.Authorization = `Bearer ${user.token}`;
+//     }
+//     return config;
+// });
+
+// // CREATE TODO
+// const createTodo = (data) => API.post("/create", data);
+
+// // GET ALL TODO (GET request)
+// const getAllTodo = (id) => API.get(`/getAll/${id}`);
+
+// // UPDATE TODO
+// const updateTodo = (id, data) => API.patch(`/update/${id}`, data);
+
+// // DELETE TODO
+// const deleteTodo = (id) => API.delete(`/delete/${id}`);
+
+// const TodoServices = { createTodo, getAllTodo, updateTodo, deleteTodo };
+// export default TodoServices;
+
+
+
 import axios from "axios";
 
 // Create axios instance with base URL
 const API = axios.create({
-    baseURL: process.env.REACT_APP_API_URL + "/todo",
+    baseURL: process.env.REACT_APP_API_URL + "/todo", // e.g., http://localhost:5000/api/v1/todo
 });
 
-// Add Authorization header automatically
+// Automatically add Authorization header if token exists
 API.interceptors.request.use((config) => {
     const user = JSON.parse(localStorage.getItem("todoapp"));
     if (user?.token) {
@@ -94,8 +127,8 @@ API.interceptors.request.use((config) => {
 // CREATE TODO
 const createTodo = (data) => API.post("/create", data);
 
-// GET ALL TODO (GET request)
-const getAllTodo = (id) => API.get(`/getAll/${id}`);
+// GET ALL TODO for a user (POST request to match backend)
+const getAllTodo = (userId) => API.post(`/getAll/${userId}`);
 
 // UPDATE TODO
 const updateTodo = (id, data) => API.patch(`/update/${id}`, data);
@@ -103,5 +136,11 @@ const updateTodo = (id, data) => API.patch(`/update/${id}`, data);
 // DELETE TODO
 const deleteTodo = (id) => API.delete(`/delete/${id}`);
 
-const TodoServices = { createTodo, getAllTodo, updateTodo, deleteTodo };
+const TodoServices = {
+    createTodo,
+    getAllTodo,
+    updateTodo,
+    deleteTodo,
+};
+
 export default TodoServices;
