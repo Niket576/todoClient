@@ -46,8 +46,8 @@ if (user?.token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
 }
 
-// base URL for your backend
-const API = "http://localhost:8080/api/v1/todo";
+// base URL (from environment variable)
+const API = process.env.REACT_APP_API_URL + "/todo";
 
 // CREATE TODO
 const createTodo = (data) => {
@@ -71,3 +71,4 @@ const deleteTodo = (id) => {
 
 const TodoServices = { createTodo, getAllTodo, updateTodo, deleteTodo };
 export default TodoServices;
+
