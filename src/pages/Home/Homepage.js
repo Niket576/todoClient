@@ -109,29 +109,31 @@ const HomePage = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [allTask, setAllTask] = useState([]);
+    const [originalTasks, setOriginalTasks] = useState([]); // store full list for search reset
 
     // get user id from localStorage
     const userData = JSON.parse(localStorage.getItem("todoapp"));
-    const id = userData?.user?._id;
+    const userId = userData?.user?._id;
 
-    // handle modal
+    // handle modal open
     const openModalHandler = () => {
         setShowModal(true);
     };
 
     // fetch user todos
     const getUserTask = useCallback(async () => {
-        if (!id) return;
+        if (!userId) return;
         setLoading(true);
         try {
-            const { data } = await TodoServices.getAllTodo(id);
+            const { data } = await TodoServices.getAllTodo(userId);
             setAllTask(data?.todos || []);
+            setOriginalTasks(data?.todos || []);
         } catch (error) {
             console.error("Error fetching todos:", error);
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [userId]);
 
     // search
     const handleSearch = (e) => {
@@ -139,21 +141,16 @@ const HomePage = () => {
         setSearchQuery(query);
 
         if (!query) {
-            getUserTask(); // reset when query is empty
+            setAllTask(originalTasks); // reset list without API call
             return;
         }
 
-        const filteredList = allTask.filter((item) =>
+        const filteredList = originalTasks.filter((item) =>
             item.title.toLowerCase().includes(query.toLowerCase())
         );
 
         setAllTask(filteredList);
     };
-
-    // fetch todos on mount
-    useEffect(() => {
-        getUserTask();
-    }, [getUserTask]);
 
     // handle task creation
     const handleTaskCreated = async () => {
@@ -163,12 +160,17 @@ const HomePage = () => {
         setShowModal(false);
     };
 
+    // fetch todos on mount
+    useEffect(() => {
+        getUserTask();
+    }, [getUserTask]);
+
     return (
         <>
             <Navbar />
             <div className="container">
                 <div className="add-task">
-                    <h1>Your Task</h1>
+                    <h1>Your Tasks</h1>
                     <input
                         type="search"
                         placeholder="Search your task"
@@ -183,10 +185,10 @@ const HomePage = () => {
                 {loading ? (
                     <Spinner />
                 ) : (
-                    allTask && <Card allTask={allTask} getUserTask={getUserTask} />
+                    <Card allTask={allTask} getUserTask={getUserTask} />
                 )}
 
-                {/* ========== modal =========== */}
+                {/* Modal for creating task */}
                 <PopModal
                     showModal={showModal}
                     setShowModal={setShowModal}
@@ -194,7 +196,7 @@ const HomePage = () => {
                     setTitle={setTitle}
                     description={description}
                     setDescription={setDescription}
-                    onTaskCreated={handleTaskCreated} // <-- add this callback
+                    onTaskCreated={handleTaskCreated} // refresh task list
                 />
             </div>
         </>
@@ -202,4 +204,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
