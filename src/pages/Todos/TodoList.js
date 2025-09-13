@@ -112,7 +112,7 @@ const TodoList = () => {
 
     // get user id
     const userData = JSON.parse(localStorage.getItem("todoapp"));
-    const id = userData?.user?.id;
+    const id = userData?.user?._id;
 
     // fetch user todos
     const getUserTask = useCallback(async () => {

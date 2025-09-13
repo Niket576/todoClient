@@ -112,7 +112,7 @@ const HomePage = () => {
 
     // get user id from localStorage
     const userData = JSON.parse(localStorage.getItem("todoapp"));
-    const id = userData?.user?.id;
+    const id = userData?.user?._id;
 
     // handle modal
     const openModalHandler = () => {
